@@ -41,8 +41,6 @@ def compress(file_input, file_output):
         while True:
             _chr = obj_file.read(1).decode("UTF-8")
 
-            if _chr == "\n" or _chr == "\t":
-                continue
             if not _chr:
                 break
             if _chr in dictionary_char:
@@ -65,8 +63,6 @@ def compress(file_input, file_output):
             while True:
                 read_chr = obj_read_file.read(1).decode("UTF-8")
 
-                if read_chr == "\n" or read_chr == "\t":
-                    continue
                 if not read_chr:
                     break
 
