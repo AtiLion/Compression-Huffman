@@ -5,4 +5,4 @@ Huffman coding made in python because I was bored
 Just copy the "huffman.py" into any directory. Run the file with python
 
 # Usage
-huffman.py <decompress/compress> <input_file> [output_file]
+huffman.py [decompress/compress] [input_file] [output_file]
