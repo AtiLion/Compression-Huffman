@@ -28,6 +28,29 @@ huffman_header = ""
 
 # Decompress the file
 def decompress(file_input, file_output):
+    print "Decompressing..."
+    with open(file_input, "r") as obj_read_file:
+        with open(file_output, "w") as obj_write_file:
+            read_chr = obj_read_file.read(1).decode("UTF-8") # Get header length
+
+            for a in range(1, ord(read_chr) / 2):
+                tmp_chr_enc = obj_read_file.read(1).decode("UTF-8")
+                tmp_chr_dec = obj_read_file.read(1).decode("UTF-8")
+                dictionary_char[tmp_chr_enc] = tmp_chr_dec
+            while True:
+                read_chr = obj_read_file.read(1).decode("UTF-8")
+
+                if not read_chr:
+                    break
+
+                if read_chr in dictionary_char:
+                    write_chr = dictionary_char[read_chr]
+                else:
+                    write_chr = read_chr
+
+                obj_write_file.write(write_chr)
+            obj_write_file.close()
+        obj_read_file.close()
 
 ############################################## START OF COMPRESSION ###################################################
 
@@ -133,18 +156,18 @@ if sys.argv[1] != "compress" and sys.argv[1] != "decompress":
 if not os.path.isfile(sys.argv[2]):
     print "Select a valid file!"
     sys.exit(0)
-if len(sys.argv) > 2:
+if len(sys.argv) > 3:
     if sys.argv[2] == sys.argv[3]:
         print "Output file cannot be the same as input file!"
         sys.exit(0)
     else:
         if sys.argv[1] == "compress":
             compress(sys.argv[2], sys.argv[3])
-        else if sys.argv[1] == "decompress":
+        elif sys.argv[1] == "decompress":
             decompress(sys.argv[2], sys.argv[3])
 else:
     if sys.argv[1] == "compress":
         compress(sys.argv[2], sys.argv[2] + ".compressed")
-    else if sys.argv[1] == "decompress":
+    elif sys.argv[1] == "decompress":
         decompress(sys.argv[2], sys.argv[2] + ".decompressed")
 print "Done!"
