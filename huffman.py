@@ -89,10 +89,7 @@ def compress(file_input, file_output):
                 if not read_chr:
                     break
 
-                #if len(huffman_tree[read_chr].bits) < 8:
-                    #for a in range(1, 8 - len(huffman_tree[read_chr].bits)):
-                        #huffman_tree[read_chr].bits.insert(0, 0)
-                write_chr = bytearray(huffman_tree[read_chr].bits)
+                write_chr = bytearray(int(a) for a in huffman_tree[read_chr].bits)
 
                 obj_write_file.write(write_chr)
             obj_write_file.close()
@@ -126,11 +123,24 @@ def generateTree():
         huffman_tree[tmp_val] = huffman_node(tmp_val, tmp_freq, node_low_2, node_low_1)
         node_low_1.active = False
         node_low_1.parent = huffman_tree[tmp_val]
-        node_low_1.bits.insert(0, 1)
+        node_low_1.bits = [1]
         node_low_2.active = False
         node_low_2.parent = huffman_tree[tmp_val]
-        node_low_2.bits.insert(0, 0)
+        node_low_2.bits = [0]
         moves_left -= 1
+
+    # Now we finish off the bits
+    for key, value in huffman_tree.items():
+        if len(key) > 1:
+            continue
+
+        binCode = [str(value.bits[0])]
+        parent = value.parent
+
+        while not parent is None and len(parent.bits) > 0:
+            binCode.insert(0, str(parent.bits[0]))
+            parent = parent.parent
+        value.bits = binCode
 
 # The header will be used to decompress the file later on
 def generateHeader():
@@ -139,7 +149,7 @@ def generateHeader():
     huffman_header += chr(len(dictionary_char) * 2) # Header length will be used as the header offset
 
     for key, value in dictionary_char.items():
-        huffman_header += str(bytearray(huffman_tree[key].bits)) + key
+        huffman_header += str(bytearray(int(a) for a in huffman_tree[key].bits)) + key
 
 # Calculates the moves it has to do
 def calc_moves():
